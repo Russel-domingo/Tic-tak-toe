@@ -114,6 +114,7 @@ const GameController = (function() {
         for(let i = 0; i < 3; i++) {
             if(b[0][i] && b[0][i] === b[1][i] && b[1][i] === b[2][i]) {
                 return `${currentPlayer.getName()} wins!`;
+
             }
         }
 
@@ -139,5 +140,79 @@ const GameController = (function() {
         resetGame,
     };
 })();
+
+
+const BoardUi = (function() {
+    const boardContainer = document.querySelector(".board");
+    const cells = document.querySelectorAll(".cell");
+    const message = document.querySelector(".message");
+    const resetBtn = document.getElementById("resetBtn");
+
+    function init() {
+        updateMessage();
+    }
+    function bindCellEvent() {
+        cells.forEach(cell => {
+            cell.addEventListener('click', () => handleClick(cell));
+        });
+    }
+
+    function bindResetEvent() {
+        resetBtn.addEventListener('click', () => handleReset());
+    }
+
+    function handleClick(cell) {
+        const row = parseInt(cell.dataset.row);
+        const col = parseInt(cell.dataset.col);
+
+        if(cell.textContent === "") {
+            const result = GameController.playMove(row, col);
+            cell.textContent = GameController.getCurrentPLayer().getMarker();
+
+            if (result) {
+                message.textContent = result;
+                disableBoard();
+            } else {
+                GameController.switchTurn();
+                updateMessage();
+            }
+
+        }
+    }
+
+    function handleReset() {
+        GameController.resetGame();
+        resetBoardUi();
+    }
+
+    function disableBoard() {
+        cells.forEach(cell => {
+            cell.style.pointerEvents = "auto";
+        });
+    }
+    function updateMessage() {
+        const current = GameController.getCurrentPLayer();
+        message.textContent = `${current.getName()}'s turn ${current.getMarker()}`;
+    }
+
+    function resetBoardUi (){
+        cells.forEach(cell => {
+            cell.textContent = "";
+        });
+        updateMessage();
+    }
+
+    return {
+        init,
+        bindCellEvent,
+        bindResetEvent,
+        updateMessage,
+    }
+    
+})();
+
+BoardUi.init();
+BoardUi.bindCellEvent();
+BoardUi.bindResetEvent();
 
 
