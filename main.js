@@ -1,4 +1,4 @@
-const Tiles = function () {
+const Tiles = (function () {
 
     let rows = 3;
     let cols = 3;
@@ -22,18 +22,53 @@ const Tiles = function () {
         if(row < 0 || row >= rows || col < 0 || col >= cols) {
             return;
         } else {
-            board[row, col] = value;
+            board[row][col] = value;
         }
+    }
+
+    function resetBoard() {
+        generateBoard();
     }
 
     generateBoard();
 
     return {
-        board,
         getBoard,
         setTiles,
+        resetBoard,
     };
-};
+})();
 
-const tiles = Tiles();
-console.log(tiles.board);
+const PLayer = (function () {
+
+    function create(name, marker) {
+        let isTurn = false;
+        
+        function getName() {
+            return name;
+        }
+
+        function getMarker() {
+            return marker;
+        }
+
+        function setTurn(turn) {
+            isTurn = turn;
+        }
+
+        function getTurn() {
+            return isTurn;
+        }
+
+        return {
+            getName,
+            getMarker,
+            setTurn,
+            getTurn,
+        };
+    }
+
+    return {create};
+}());
+
+console.log(Tiles.getBoard());
