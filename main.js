@@ -74,10 +74,17 @@ const PLayer = (function () {
 const GameController = (function() {
 
     const board = Tiles;
-    const player1 = PLayer.create("Player1", "X");
-    const player2 = PLayer.create("Player2", "O");
-
-    let currentPlayer = player1;
+    let player1, player2
+    let currentPlayer;
+    
+    function startGame(p1name, p2name) {
+        player1 = PLayer.create(p1name || "Player1", "X");
+        player2 = PLayer.create(p2name || "Player2", "O");
+        
+        currentPlayer = player1;  
+        board.resetBoard();  
+    }
+    
 
     function switchTurn() {
         if(currentPlayer === player1) {
@@ -125,6 +132,11 @@ const GameController = (function() {
             return `${currentPlayer.getName()} wins!`;
         }
 
+        let allFilled = b.flat().every(cell => cell !== "");
+        if (allFilled) {
+            return "It's a tie!";
+        }
+
         return null;
     }
 
@@ -138,6 +150,7 @@ const GameController = (function() {
         switchTurn,
         checkWinner,
         resetGame,
+        startGame,
     };
 })();
 
@@ -147,9 +160,15 @@ const BoardUi = (function() {
     const cells = document.querySelectorAll(".cell");
     const message = document.querySelector(".message");
     const resetBtn = document.getElementById("resetBtn");
+    const startBtn = document.getElementById("startBtn");
+    const player1 = document.getElementById("player1Name");
+    const player2 = document.getElementById("player2Name");
 
     function init() {
-        updateMessage();
+        bindCellEvent();
+        bindResetEvent();
+        startBtn.addEventListener('click', handleStart);
+        
     }
     function bindCellEvent() {
         cells.forEach(cell => {
@@ -180,19 +199,28 @@ const BoardUi = (function() {
         }
     }
 
+    function handleStart() {
+        GameController.startGame(player1.value, player2.value);
+        resetBoardUi();
+        enableBoard();
+    }
     function handleReset() {
         GameController.resetGame();
         resetBoardUi();
+        enableBoard(); 
     }
 
+    function enableBoard() {
+        cells.forEach(cell => cell.style.pointerEvents = "auto");
+    }
     function disableBoard() {
         cells.forEach(cell => {
-            cell.style.pointerEvents = "auto";
+            cell.style.pointerEvents = "none";
         });
     }
     function updateMessage() {
         const current = GameController.getCurrentPLayer();
-        message.textContent = `${current.getName()}'s turn ${current.getMarker()}`;
+        message.textContent = `${current.getName()}'s turn (${current.getMarker()})`;
     }
 
     function resetBoardUi (){
@@ -212,7 +240,6 @@ const BoardUi = (function() {
 })();
 
 BoardUi.init();
-BoardUi.bindCellEvent();
-BoardUi.bindResetEvent();
+
 
 
