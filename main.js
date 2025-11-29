@@ -136,23 +136,8 @@ const GameController = (function() {
         playMove,
         switchTurn,
         checkWinner,
+        resetGame,
     };
 })();
 
-console.log(Tiles.getBoard());
-console.log("Starting Tic-Tac-Toe game:\n");
 
-console.log("Player1 (X) moves at (0,0)");
-GameController.playMove(0,0);
-
-console.log("Player2 (O) moves at (1,1)");
-GameController.playMove(1,1);
-
-console.log("Player1 (X) moves at (0,1)");
-GameController.playMove(0,1);
-
-console.log("Player2 (O) moves at (2,2)");
-GameController.playMove(2,2);
-
-console.log("Player1 (X) moves at (0,2)");
-GameController.playMove(0,2); // Player1 should win
